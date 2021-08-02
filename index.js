@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 var morgan = require("morgan");
 const cors = require("cors");
+require("dotenv").config();
 const Instance = require("./models/instance");
 
 app.use(express.json());
@@ -12,14 +13,10 @@ morgan.token("url", (request, response) => {
 app.use(cors());
 app.use(express.static("build"));
 
-let people = [];
-Instance.find({}).then((result) => {
-  people = result;
-});
-
 app.get("/api/persons", (request, response) => {
-  response.json();
-  response.json(people);
+  Instance.find({}).then((result) => {
+    response.json(result);
+  });
 });
 
 app.get("/info", (request, response) => {
