@@ -20,7 +20,7 @@ mongoose
 
 const instanceSchema = new mongoose.Schema({
   name: String,
-  number: Number,
+  number: String,
 });
 
 instanceSchema.set("toJSON", {
@@ -28,6 +28,7 @@ instanceSchema.set("toJSON", {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
+    returnedObject.number = returnedObject.number;
   },
 });
 

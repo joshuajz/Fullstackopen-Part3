@@ -13,8 +13,21 @@ morgan.token("url", (request, response) => {
 app.use(cors());
 app.use(express.static("build"));
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
+
 app.get("/api/persons", (request, response) => {
   Instance.find({}).then((result) => {
+    console.log(result);
     response.json(result);
   });
 });
@@ -29,17 +42,18 @@ app.get("/info", (request, response) => {
   });
 });
 
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
-  Instance.find({ id: id }).then((result) => {
-    if (result.length === 1) {
-      response.json(result[0]);
-    } else {
-      response.send(
-        "<h1>404</h1><p>Error!  That note id could not be found in the dataset.</p>"
-      );
-    }
-  });
+  Instance.findById(id)
+    .then((result) => {
+      console.log(result);
+      if (result) {
+        response.json(result);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (request, response) => {
