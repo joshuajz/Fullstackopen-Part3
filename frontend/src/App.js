@@ -53,6 +53,7 @@ const App = () => {
             setNotification(
               `"${newPerson.name}" 's phone number was successfully edited!`
             );
+            console.log(person, newPerson, persons);
             setTimeout(() => {
               setNotification(null);
               setColour("black");
@@ -75,7 +76,7 @@ const App = () => {
       const addedPerson = { name: newName, number: phoneNumber };
 
       noteService.create(addedPerson).then((response) => {
-        console.log(response)
+        console.log(response);
         setPersons(persons.concat(response));
         setColour("green");
         setNotification(`"${addedPerson.name}" was added to the server!`);

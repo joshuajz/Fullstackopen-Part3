@@ -27,7 +27,6 @@ app.use(errorHandler);
 
 app.get("/api/persons", (request, response) => {
   Instance.find({}).then((result) => {
-    console.log(result);
     response.json(result);
   });
 });
@@ -46,7 +45,6 @@ app.get("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
   Instance.findById(id)
     .then((result) => {
-      console.log(result);
       if (result) {
         response.json(result);
       } else {
@@ -60,6 +58,22 @@ app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id;
   Instance.findByIdAndRemove(id).then((result) => {
     response.status(204).end();
+  });
+});
+
+app.put("/api/persons/:id", (request, response) => {
+  const body = request.body;
+  console.log(request, "\n", response, "\n", body.name);
+
+  Instance.find({ name: body.name }).then((result) => {
+    if (result.length === 1) {
+      console.log(result);
+      Instance.updateOne({ name: body.name }, { number: body.number }).then(
+        () => {
+          response.status(200).end();
+        }
+      );
+    }
   });
 });
 
@@ -78,6 +92,25 @@ app.post("/api/persons", (request, response) => {
     console.log("Phone Number Saved.");
     response.json(result);
   });
+
+  // Instance.find({ name: body.name }).then((result) => {
+  //   console.log("result", result);
+  //   if (result.length === 1) {
+  //     console.log(result);
+  //     Instance.updateOne(
+  //       { name: body.name },
+  //       { number: body.number },
+  //       (error, docs) => {
+  //         if (error) {
+  //           console.log(error);
+  //         } else {
+  //           console.log(docs);
+  //         }
+  //       }
+  //     );
+  //   } else {
+  //   }
+  // });
 });
 
 const PORT = process.env.PORT || 3001;
