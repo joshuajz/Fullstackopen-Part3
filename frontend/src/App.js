@@ -53,7 +53,6 @@ const App = () => {
             setNotification(
               `"${newPerson.name}" 's phone number was successfully edited!`
             );
-            console.log(person, newPerson, persons);
             setTimeout(() => {
               setNotification(null);
               setColour("black");
@@ -75,16 +74,25 @@ const App = () => {
     } else {
       const addedPerson = { name: newName, number: phoneNumber };
 
-      noteService.create(addedPerson).then((response) => {
-        console.log(response);
-        setPersons(persons.concat(response));
-        setColour("green");
-        setNotification(`"${addedPerson.name}" was added to the server!`);
-        setTimeout(() => {
-          setNotification(null);
-          setColour("black");
-        }, 5000);
-      });
+      noteService
+        .create(addedPerson)
+        .then((response) => {
+          setPersons(persons.concat(response));
+          setColour("green");
+          setNotification(`"${addedPerson.name}" was added to the server!`);
+          setTimeout(() => {
+            setNotification(null);
+            setColour("black");
+          }, 5000);
+        })
+        .catch((error) => {
+          setNotification(error.response.data);
+          setColour("red");
+          setTimeout(() => {
+            setNotification(null);
+            setColour("black");
+          }, 5000);
+        });
       setNewName("");
       setPhoneNumber("");
     }

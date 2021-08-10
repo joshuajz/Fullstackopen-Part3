@@ -20,8 +20,8 @@ mongoose
   });
 
 const instanceSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true, minLength: 5 },
-  number: { type: String, required: true },
+  name: { type: String, required: true, unique: true, minLength: 3 },
+  number: { type: String, required: true, minLength: 8 },
 });
 
 instanceSchema.set("toJSON", {

@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.static("build"));
 
 const errorHandler = (error, request, response, next) => {
-  console.error(error.message);
+  console.log("!!##Error:", error.message);
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
@@ -63,23 +63,25 @@ app.delete("/api/persons/:id", (request, response) => {
   });
 });
 
-app.put("/api/persons/:id", (request, response) => {
+app.put("/api/persons/:id", (request, response, next) => {
   const body = request.body;
   console.log(request, "\n", response, "\n", body.name);
 
-  Instance.find({ name: body.name }).then((result) => {
-    if (result.length === 1) {
-      console.log(result);
-      Instance.updateOne({ name: body.name }, { number: body.number }).then(
-        () => {
-          response.status(200).end();
-        }
-      );
-    }
-  });
+  Instance.find({ name: body.name })
+    .then((result) => {
+      if (result.length === 1) {
+        console.log(result);
+        Instance.updateOne({ name: body.name }, { number: body.number }).then(
+          () => {
+            response.status(200).end();
+          }
+        );
+      }
+    })
+    .catch((error) => next(error));
 });
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
   if (!body.name) {
@@ -90,29 +92,13 @@ app.post("/api/persons", (request, response) => {
   }
 
   const instance = new Instance({ name: body.name, number: body.number });
-  instance.save().then((result) => {
-    console.log("Phone Number Saved.");
-    response.json(result);
-  });
-
-  // Instance.find({ name: body.name }).then((result) => {
-  //   console.log("result", result);
-  //   if (result.length === 1) {
-  //     console.log(result);
-  //     Instance.updateOne(
-  //       { name: body.name },
-  //       { number: body.number },
-  //       (error, docs) => {
-  //         if (error) {
-  //           console.log(error);
-  //         } else {
-  //           console.log(docs);
-  //         }
-  //       }
-  //     );
-  //   } else {
-  //   }
-  // });
+  instance
+    .save()
+    .then((result) => {
+      console.log("Phone Number Saved.");
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
 
 const PORT = process.env.PORT || 3001;
