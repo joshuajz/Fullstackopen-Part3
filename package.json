@@ -6,11 +6,13 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build:ui": "rm -rf build && cd frontend/ && npm run build --prod && cp -r build ../"
+    "build:ui": "rm -rf build && cd frontend/ && npm run build --prod && cp -r build ../",
+    "lint": "eslint ."
   },
   "author": "Josh Cowan",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^7.32.0",
     "nodemon": "^2.0.12"
   },
   "dependencies": {
